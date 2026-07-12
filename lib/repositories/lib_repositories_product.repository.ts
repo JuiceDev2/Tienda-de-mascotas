@@ -8,7 +8,7 @@ import {
   ProductWithRelations, 
   PaginatedResponse,
   PaginationParams 
-} from '../lib_supabase_types';
+} from '../supabase/types';
 
 /**
  * Product Repository
@@ -264,18 +264,19 @@ export class ProductRepository {
       `)
       .eq('company_id', companyId)
       .eq('branch_id', branchId)
-      .lte('quantity_on_hand', this.supabase.raw('minimum_stock'))
       .order('quantity_on_hand', { ascending: true });
 
     if (error) {
       throw new Error(`Error fetching low stock products: ${error.message}`);
     }
 
-    return (data || []).map((inv: any) => ({
-      ...inv.product,
-      quantity_on_hand: inv.quantity_on_hand,
-      minimum_stock: inv.minimum_stock,
-    }));
+    return (data || [])
+      .filter((inv: any) => inv.quantity_on_hand <= inv.minimum_stock)
+      .map((inv: any) => ({
+        ...inv.product,
+        quantity_on_hand: inv.quantity_on_hand,
+        minimum_stock: inv.minimum_stock,
+      }));
   }
 
   /**

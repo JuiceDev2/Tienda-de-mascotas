@@ -14,7 +14,7 @@ import {
   PaginatedResponse,
   PaginationParams,
   NotificationStatus,
-} from '../lib_supabase_types';
+} from '../supabase/types';
 
 /**
  * USER REPOSITORY
@@ -297,11 +297,19 @@ export class CustomerRepository {
   }
 
   async updatePurchaseInfo(customerId: string, amount: number): Promise<void> {
+    const { data: current, error: fetchError } = await this.supabase
+      .from('customers')
+      .select('total_purchases, total_spent')
+      .eq('id', customerId)
+      .single();
+
+    if (fetchError) throw new Error(`Error fetching customer totals: ${fetchError.message}`);
+
     await this.supabase
       .from('customers')
       .update({
-        total_purchases: this.supabase.raw('total_purchases + 1'),
-        total_spent: this.supabase.raw(`total_spent + ${amount}`),
+        total_purchases: (current?.total_purchases || 0) + 1,
+        total_spent: (current?.total_spent || 0) + amount,
         last_purchase_at: new Date().toISOString(),
       })
       .eq('id', customerId);

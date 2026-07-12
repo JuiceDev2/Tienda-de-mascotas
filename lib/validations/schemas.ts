@@ -9,7 +9,7 @@ import {
   InventoryMovementType, 
   PetStatus,
   NotificationType 
-} from './lib_supabase_types';
+} from '../supabase/types';
 
 // ============================================================================
 // COMMON SCHEMAS

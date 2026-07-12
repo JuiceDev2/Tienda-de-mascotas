@@ -31,26 +31,26 @@ export async function middleware(req: NextRequest) {
   );
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const pathname = req.nextUrl.pathname;
   const isPublicRoute = publicRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + '/')
   );
 
-  if (!session && !isPublicRoute) {
+  if (!user && !isPublicRoute) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  if (session) {
-    const { data: user } = await supabase
+  if (user) {
+    const { data: dbUser } = await supabase
       .from('users')
       .select('role')
-      .eq('id', session.user.id)
+      .eq('id', user.id)
       .single();
 
-    const userRole = user?.role;
+    const userRole = dbUser?.role;
 
     for (const [route, allowedRoles] of Object.entries(protectedRoutes)) {
       if (pathname.startsWith(route)) {

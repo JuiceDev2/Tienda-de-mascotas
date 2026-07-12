@@ -3,27 +3,27 @@
 // Handles validation, coordination, and business logic
 // ============================================================================
 
-import { validateData } from '../lib_validations_schemas';
 import {
+  validateData,
   CreateSaleSchema,
   RegisterInventoryMovementSchema,
   TransferStockSchema,
   CreateProductSchema,
-} from '../lib_validations_schemas';
-import { productRepository } from '../lib_repositories_product.repository';
-import { salesRepository } from '../lib_repositories_sale.repository';
-import { inventoryRepository } from '../lib_repositories_inventory.repository';
+  CreateSale,
+} from '../validations/schemas';
+import { productRepository } from '../repositories/lib_repositories_product.repository';
+import { salesRepository } from '../repositories/lib_repositories_sale.repository';
+import { inventoryRepository } from '../repositories/lib_repositories_inventory.repository';
 import {
   userRepository,
   notificationRepository,
   customerRepository,
-} from '../lib_repositories_all';
+} from '../repositories/index';
 import {
-  CreateSale,
   NotificationType,
   NotificationStatus,
   CreateSaleItemRequest,
-} from '../lib_supabase_types';
+} from '../supabase/types';
 
 /**
  * PRODUCT SERVICE
@@ -127,11 +127,9 @@ export class SalesService {
     const result = await salesRepository.createSaleWithItems(
       companyId,
       branchId,
+      validated,
       customer.id,
-      validated.customer_phone,
-      validated.customer_name,
-      sellerId,
-      validated as any
+      sellerId
     );
 
     // Update customer purchase stats
@@ -432,7 +430,7 @@ export class NotificationService {
     }
   }
 
-  private async getBranchesByCompany(companyId: string) {
+  private async getBranchesByCompany(companyId: string): Promise<{ id: string }[]> {
     // This should call a branch repository method
     // For now, returning empty array
     return [];

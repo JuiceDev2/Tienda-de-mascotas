@@ -3,14 +3,14 @@
 // ============================================================================
 
 import { createClient } from '@supabase/supabase-js';
-import { 
-  Sale, 
+import {
+  Sale,
   SaleWithItems,
   SaleStatus,
   PaginatedResponse,
   PaginationParams,
-  CreateSale 
-} from '../lib_supabase_types';
+} from '../supabase/types';
+import { CreateSale } from '../validations/schemas';
 
 /**
  * Sales Repository

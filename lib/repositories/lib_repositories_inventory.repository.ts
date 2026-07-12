@@ -10,7 +10,7 @@ import {
   PaginatedResponse,
   PaginationParams,
   InventoryMovementType
-} from '../lib_supabase_types';
+} from '../supabase/types';
 
 /**
  * Inventory Repository
@@ -150,14 +150,15 @@ export class InventoryRepository {
       `)
       .eq('company_id', companyId)
       .eq('branch_id', branchId)
-      .lte('quantity_on_hand', this.supabase.raw('minimum_stock'))
       .order('quantity_on_hand', { ascending: true });
 
     if (error) {
       throw new Error(`Error fetching low stock products: ${error.message}`);
     }
 
-    return data as InventoryWithProduct[];
+    return ((data || []) as any[]).filter(
+      (inv) => inv.quantity_on_hand <= inv.minimum_stock
+    ) as InventoryWithProduct[];
   }
 
   /**
