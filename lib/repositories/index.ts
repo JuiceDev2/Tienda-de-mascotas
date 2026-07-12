@@ -287,9 +287,13 @@ export class CustomerRepository {
         company_id: companyId,
         phone,
         full_name: fullName,
+        email: null,
+        address: null,
+        city: null,
         total_purchases: 0,
         total_spent: 0,
         is_blocked: false,
+        last_purchase_at: null,
       });
     }
 
