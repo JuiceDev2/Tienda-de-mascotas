@@ -93,7 +93,7 @@ export class ProductRepository {
     const pageCount = Math.ceil(total / pageSize);
 
     return {
-      data: data as Product[],
+      data: data as unknown as Product[],
       count: data?.length || 0,
       total,
       page,
@@ -388,7 +388,7 @@ export class ProductRepository {
     const pageCount = Math.ceil(total / limit);
 
     return {
-      data: data as Product[],
+      data: data as unknown as Product[],
       count: data?.length || 0,
       total,
       page,

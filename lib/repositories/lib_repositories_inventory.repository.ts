@@ -91,7 +91,7 @@ export class InventoryRepository {
     const pageCount = Math.ceil(total / limit);
 
     return {
-      data: data as InventoryWithProduct[],
+      data: data as unknown as InventoryWithProduct[],
       count: data?.length || 0,
       total,
       page,

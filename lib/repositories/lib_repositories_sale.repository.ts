@@ -88,7 +88,7 @@ export class SalesRepository {
     const pageCount = Math.ceil(total / limit);
 
     return {
-      data: data as SaleWithItems[],
+      data: data as unknown as SaleWithItems[],
       count: data?.length || 0,
       total,
       page,
@@ -128,7 +128,7 @@ export class SalesRepository {
       throw new Error(`Error fetching sale: ${error.message}`);
     }
 
-    return data as SaleWithItems;
+    return data as unknown as SaleWithItems;
   }
 
   /**
