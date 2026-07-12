@@ -98,7 +98,7 @@ export type UserUpdate = z.infer<typeof UserUpdateSchema>;
 // PRODUCT SCHEMAS
 // ============================================================================
 
-export const ProductCreateSchema = z.object({
+const ProductBaseSchema = z.object({
   code: z.string().min(2).max(50, 'Code must be between 2 and 50 characters'),
   barcode: z.string().optional(),
   name: z.string().min(3, 'Name must be at least 3 characters'),
@@ -111,12 +111,17 @@ export const ProductCreateSchema = z.object({
   utility_percentage: z.number().min(0).max(100).default(0),
   iva_percentage: z.number().min(0).max(100).default(0),
   image_urls: z.array(z.string().url()).default([]),
-}).refine(
+});
+
+export const ProductCreateSchema = ProductBaseSchema.refine(
   (data) => parseFloat(String(data.selling_price)) > parseFloat(String(data.cost_price)),
   { message: 'Selling price must be greater than cost price', path: ['selling_price'] }
 );
 
-export const ProductUpdateSchema = ProductCreateSchema.partial();
+// .partial() must run on the plain ZodObject (ProductBaseSchema), not on the
+// ZodEffects returned by .refine() — ZodEffects has no .partial() method,
+// which was the cause of the Vercel build failure.
+export const ProductUpdateSchema = ProductBaseSchema.partial();
 
 export type ProductCreate = z.infer<typeof ProductCreateSchema>;
 export type ProductUpdate = z.infer<typeof ProductUpdateSchema>;
