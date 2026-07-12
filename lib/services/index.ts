@@ -8,7 +8,7 @@ import {
   CreateSaleSchema,
   RegisterInventoryMovementSchema,
   TransferStockSchema,
-  CreateProductSchema,
+  ProductCreateSchema as CreateProductSchema,
   CreateSale,
 } from '../validations/schemas';
 import { productRepository } from '../repositories/lib_repositories_product.repository';

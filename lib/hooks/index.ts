@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { User, Product, Sale, Notification } from '@/lib/supabase/types';
+import { User, Product, Sale } from '@/lib/supabase/types';
 
 const supabase = createClient();
 
