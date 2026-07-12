@@ -476,7 +476,13 @@ export class InventoryRepository {
       throw new Error(`Error getting category summary: ${error.message}`);
     }
 
-    const grouped = (data || []).reduce((acc: any, inv: any) => {
+    const grouped = (data || []).reduce((acc: Record<string, {
+      category_id: string;
+      category_name: string;
+      total_items: number;
+      total_quantity: number;
+      total_value: number;
+    }>, inv: any) => {
       const categoryId = inv.product?.category?.id;
       const categoryName = inv.product?.category?.name || 'Unknown';
 
@@ -495,7 +501,13 @@ export class InventoryRepository {
       acc[categoryId].total_value += inv.quantity_on_hand * (inv.product?.cost_price || 0);
 
       return acc;
-    }, {});
+    }, {} as Record<string, {
+      category_id: string;
+      category_name: string;
+      total_items: number;
+      total_quantity: number;
+      total_value: number;
+    }>);
 
     return Object.values(grouped);
   }

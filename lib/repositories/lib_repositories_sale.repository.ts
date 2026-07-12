@@ -399,7 +399,12 @@ export class SalesRepository {
     }
 
     // Group by product
-    const grouped = (data || []).reduce((acc: any, item: any) => {
+    const grouped = (data || []).reduce((acc: Record<string, {
+      product_id: string;
+      product_name: string;
+      quantity_sold: number;
+      total_amount: number;
+    }>, item: any) => {
       const key = item.product_id;
       if (!acc[key]) {
         acc[key] = {
@@ -412,11 +417,16 @@ export class SalesRepository {
       acc[key].quantity_sold += item.quantity;
       acc[key].total_amount += item.line_total;
       return acc;
-    }, {});
+    }, {} as Record<string, {
+      product_id: string;
+      product_name: string;
+      quantity_sold: number;
+      total_amount: number;
+    }>);
 
     // Sort by total amount and limit
     return Object.values(grouped)
-      .sort((a: any, b: any) => b.total_amount - a.total_amount)
+      .sort((a, b) => b.total_amount - a.total_amount)
       .slice(0, params.limit || 10);
   }
 
@@ -507,7 +517,11 @@ export class SalesRepository {
     }
 
     // Group by date
-    const grouped = (data || []).reduce((acc: any, sale: any) => {
+    const grouped = (data || []).reduce((acc: Record<string, {
+      date: string;
+      total_sales: number;
+      total_amount: number;
+    }>, sale: any) => {
       const date = new Date(sale.sale_date).toISOString().split('T')[0];
       if (!acc[date]) {
         acc[date] = { date, total_sales: 0, total_amount: 0 };
@@ -515,10 +529,14 @@ export class SalesRepository {
       acc[date].total_sales += 1;
       acc[date].total_amount += sale.total_amount;
       return acc;
-    }, {});
+    }, {} as Record<string, {
+      date: string;
+      total_sales: number;
+      total_amount: number;
+    }>);
 
-    return Object.values(grouped).sort((a: any, b: any) =>
-      new Date(a.date).getTime() - new Date(b.date).getTime()
+    return Object.values(grouped).sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
   }
 }
