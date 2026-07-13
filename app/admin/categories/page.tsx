@@ -93,7 +93,7 @@ export default function AdminCategoriesPage() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Categorías</h1>
         <Button onClick={openCreate}>
           <Plus className="w-4 h-4 mr-2" /> Nueva categoría

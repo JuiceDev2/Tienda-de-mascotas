@@ -93,9 +93,9 @@ export default function CartPage() {
             <>
               <div className="bg-white rounded-lg shadow divide-y">
                 {cart.map((item) => (
-                  <div key={item.productId} className="p-4 flex items-center gap-4">
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900">{item.productName}</p>
+                  <div key={item.productId} className="p-4 flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4">
+                    <div className="flex-1 min-w-[140px]">
+                      <p className="font-medium text-gray-900 truncate">{item.productName}</p>
                       <p className="text-sm text-gray-500">${item.price.toFixed(2)} c/u</p>
                     </div>
                     <input
@@ -105,14 +105,14 @@ export default function CartPage() {
                       onChange={(e) =>
                         updateQuantity(item.productId, Math.max(1, parseInt(e.target.value) || 1))
                       }
-                      className="w-16 px-2 py-1 border rounded text-center"
+                      className="w-14 sm:w-16 px-2 py-1 border rounded text-center shrink-0"
                     />
-                    <p className="w-20 text-right font-semibold">
+                    <p className="w-16 sm:w-20 text-right font-semibold shrink-0">
                       ${(item.price * item.quantity).toFixed(2)}
                     </p>
                     <button
                       onClick={() => removeItem(item.productId)}
-                      className="text-red-600 text-sm hover:underline"
+                      className="text-red-600 text-sm hover:underline shrink-0"
                     >
                       Quitar
                     </button>

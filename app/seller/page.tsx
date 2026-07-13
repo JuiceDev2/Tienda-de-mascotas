@@ -107,14 +107,14 @@ export default function SellerPosPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">Punto de venta</h1>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Punto de venta</h1>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar productos..."
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm w-64"
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm w-full sm:w-64"
             />
           </div>
 
@@ -144,7 +144,7 @@ export default function SellerPosPage() {
           )}
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6 h-fit sticky top-24">
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6 h-fit lg:sticky lg:top-24">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Venta actual</h2>
 
           {error && (

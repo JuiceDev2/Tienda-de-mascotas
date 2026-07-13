@@ -19,11 +19,20 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Menu, Search, ShoppingCart, Bell, User, LogOut, X } from 'lucide-react';
 
+export { PwaRegister } from './PwaRegister';
+
 /**
  * HEADER COMPONENT
  * Top navigation bar with search, cart, notifications
  */
-export function Header({ showCart = true }: { showCart?: boolean }) {
+export function Header({
+  showCart = true,
+  onMenuClick,
+}: {
+  showCart?: boolean;
+  /** When provided, shows a hamburger button on the left (used to toggle a Sidebar on mobile) */
+  onMenuClick?: () => void;
+}) {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -53,10 +62,21 @@ export function Header({ showCart = true }: { showCart?: boolean }) {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-14 sm:h-16 gap-2">
+          {/* Sidebar toggle (mobile, only on admin/seller layouts) */}
+          {onMenuClick && (
+            <button
+              onClick={onMenuClick}
+              className="lg:hidden -ml-1 p-2 rounded-md text-gray-600 hover:bg-gray-100 shrink-0"
+              aria-label="Abrir menú"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+          )}
+
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-blue-600">
+          <Link href="/" className="text-lg sm:text-2xl font-bold text-blue-600 truncate shrink-0">
             {storeName}
           </Link>
 
@@ -75,7 +95,7 @@ export function Header({ showCart = true }: { showCart?: boolean }) {
           </form>
 
           {/* Right side icons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto">
             {/* Notifications (Desktop) */}
             {user && (
               <button className="relative hidden md:flex">
@@ -126,15 +146,16 @@ export function Header({ showCart = true }: { showCart?: boolean }) {
               </Button>
             )}
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Search Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden"
+              className="md:hidden p-2 -mr-2 rounded-md text-gray-600 hover:bg-gray-100"
+              aria-label={mobileMenuOpen ? 'Cerrar búsqueda' : 'Buscar'}
             >
               {mobileMenuOpen ? (
                 <X className="w-6 h-6" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <Search className="w-6 h-6" />
               )}
             </button>
           </div>
@@ -167,36 +188,73 @@ export function Sidebar({
   items,
   activeItem,
   onItemClick,
+  title = 'Admin',
+  isOpen = false,
+  onClose,
 }: {
   items: Array<{ label: string; href: string; icon?: React.ReactNode }>;
   activeItem: string;
   onItemClick: (href: string) => void;
+  title?: string;
+  /** Controls visibility on mobile/tablet (below the lg breakpoint) */
+  isOpen?: boolean;
+  onClose?: () => void;
 }) {
-  return (
-    <aside className="w-64 bg-gray-900 text-white min-h-screen p-6">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold">Admin</h2>
-      </div>
+  const handleItemClick = (href: string) => {
+    onItemClick(href);
+    onClose?.();
+  };
 
-      <nav className="space-y-2">
-        {items.map((item) => (
-          <button
-            key={item.href}
-            onClick={() => onItemClick(item.href)}
-            className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-              activeItem === item.href
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:bg-gray-800'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              {item.icon}
-              {item.label}
-            </div>
-          </button>
-        ))}
-      </nav>
-    </aside>
+  return (
+    <>
+      {/* Backdrop (mobile/tablet only) */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 sm:w-72 bg-gray-900 text-white p-6 flex flex-col
+          transform transition-transform duration-200 ease-in-out overflow-y-auto
+          lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:z-30
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="text-2xl font-bold">{title}</h2>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="lg:hidden p-1 text-gray-300 hover:text-white"
+              aria-label="Cerrar menú"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          )}
+        </div>
+
+        <nav className="space-y-1 sm:space-y-2">
+          {items.map((item) => (
+            <button
+              key={item.href}
+              onClick={() => handleItemClick(item.href)}
+              className={`w-full text-left px-4 py-2.5 sm:py-2 rounded-lg transition-colors ${
+                activeItem === item.href
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-300 hover:bg-gray-800'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                {item.icon}
+                {item.label}
+              </div>
+            </button>
+          ))}
+        </nav>
+      </aside>
+    </>
   );
 }
 
@@ -272,48 +330,51 @@ export function DataTable({
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      <table className="w-full">
-        <thead className="bg-gray-50 border-b">
-          <tr>
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                className="px-6 py-3 text-left text-sm font-semibold text-gray-900"
-              >
-                {col.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y">
-          {data.length === 0 ? (
+      {/* Horizontal scroll wrapper so wide tables don't break the layout on phones */}
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[640px]">
+          <thead className="bg-gray-50 border-b">
             <tr>
-              <td colSpan={columns.length} className="px-6 py-4 text-center text-gray-500">
-                No hay datos
-              </td>
+              {columns.map((col) => (
+                <th
+                  key={col.key}
+                  className="px-3 sm:px-6 py-3 text-left text-xs sm:text-sm font-semibold text-gray-900 whitespace-nowrap"
+                >
+                  {col.label}
+                </th>
+              ))}
             </tr>
-          ) : (
-            data.map((row, idx) => (
-              <tr
-                key={idx}
-                onClick={() => onRowClick?.(row)}
-                className={onRowClick ? 'hover:bg-gray-50 cursor-pointer' : ''}
-              >
-                {columns.map((col) => (
-                  <td key={col.key} className="px-6 py-4 text-sm text-gray-900">
-                    {col.render ? col.render(row[col.key], row) : row[col.key]}
-                  </td>
-                ))}
+          </thead>
+          <tbody className="divide-y">
+            {data.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length} className="px-3 sm:px-6 py-4 text-center text-gray-500">
+                  No hay datos
+                </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              data.map((row, idx) => (
+                <tr
+                  key={idx}
+                  onClick={() => onRowClick?.(row)}
+                  className={onRowClick ? 'hover:bg-gray-50 cursor-pointer' : ''}
+                >
+                  {columns.map((col) => (
+                    <td key={col.key} className="px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-900">
+                      {col.render ? col.render(row[col.key], row) : row[col.key]}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* Pagination */}
       {pagination && (
-        <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-t">
-          <div className="text-sm text-gray-600">
+        <div className="bg-gray-50 px-3 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t">
+          <div className="text-xs sm:text-sm text-gray-600">
             Mostrando 1 - {data.length} de {pagination.total} resultados
           </div>
           <div className="flex gap-2">
@@ -532,14 +593,14 @@ export function Modal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b sticky top-0 bg-white">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900">{title}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="p-6">{children}</div>
+        <div className="p-4 sm:p-6">{children}</div>
       </div>
     </div>
   );

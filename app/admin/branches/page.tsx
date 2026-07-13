@@ -118,7 +118,7 @@ export default function AdminBranchesPage() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Sucursales</h1>
         <Button onClick={openCreate}>
           <Plus className="w-4 h-4 mr-2" /> Nueva sucursal
@@ -167,7 +167,7 @@ export default function AdminBranchesPage() {
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
                 <Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
@@ -181,7 +181,7 @@ export default function AdminBranchesPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
               <Input required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
                 <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
@@ -198,7 +198,7 @@ export default function AdminBranchesPage() {
                 onChange={(e) => setForm({ ...form, manager_name: e.target.value })}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Hora apertura (HH:mm)</label>
                 <Input

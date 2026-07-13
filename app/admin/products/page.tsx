@@ -253,7 +253,7 @@ export default function AdminProductsPage() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Productos y Mascotas</h1>
         <Button
           onClick={openCreate}
@@ -263,7 +263,7 @@ export default function AdminProductsPage() {
         </Button>
       </div>
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setTab('product')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
@@ -445,7 +445,7 @@ export default function AdminProductsPage() {
 
           {formType === 'product' ? (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Código</label>
                   <Input
@@ -487,7 +487,7 @@ export default function AdminProductsPage() {
                   onChange={(e) => setProductForm({ ...productForm, image_urls: e.target.value })}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
                   <select
@@ -522,7 +522,7 @@ export default function AdminProductsPage() {
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Precio de costo</label>
                   <Input
@@ -544,7 +544,7 @@ export default function AdminProductsPage() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">% IVA</label>
                   <Input
@@ -568,7 +568,7 @@ export default function AdminProductsPage() {
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   Disponibilidad en tienda (sucursal y existencias)
                 </p>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Sucursal</label>
                     <select
@@ -611,7 +611,7 @@ export default function AdminProductsPage() {
             </form>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
                   <Input required value={petForm.name} onChange={(e) => setPetForm({ ...petForm, name: e.target.value })} />
@@ -626,7 +626,7 @@ export default function AdminProductsPage() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Raza</label>
                   <Input value={petForm.breed} onChange={(e) => setPetForm({ ...petForm, breed: e.target.value })} />
@@ -641,7 +641,7 @@ export default function AdminProductsPage() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Sexo</label>
                   <select

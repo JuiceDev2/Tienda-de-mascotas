@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/hooks';
 import { Sidebar, Header, LoadingSpinner } from '@/components/shared';
 import {
@@ -28,12 +28,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && user && user.role !== 'admin') {
       router.replace('/');
     }
   }, [isLoading, user, router]);
+
+  // Close the mobile sidebar automatically whenever the route changes
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   if (isLoading) {
     return (
@@ -49,11 +55,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         items={SIDEBAR_ITEMS}
         activeItem={pathname}
         onItemClick={(href) => router.push(href)}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
 
-      <div className="flex-1">
-        <Header showCart={false} />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
+      <div className="flex-1 min-w-0">
+        <Header showCart={false} onMenuClick={() => setSidebarOpen(true)} />
+        <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">{children}</main>
       </div>
     </div>
   );
