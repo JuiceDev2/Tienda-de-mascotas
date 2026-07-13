@@ -6,7 +6,7 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'PetShop ERP/POS - Sistema de Gestión',
+  title: 'AquaPets ERP/POS - Sistema de Gestión',
   description: 'Sistema ERP/POS multiempresa para tiendas de mascotas',
   manifest: '/manifest.json',
   icons: {

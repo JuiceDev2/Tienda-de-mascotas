@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks';
@@ -28,6 +28,16 @@ export function Header({ showCart = true }: { showCart?: boolean }) {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [storeName, setStoreName] = useState('AquaPets');
+
+  useEffect(() => {
+    fetch('/api/company')
+      .then((res) => res.json())
+      .then((body) => {
+        if (body.data?.name) setStoreName(body.data.name);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +57,7 @@ export function Header({ showCart = true }: { showCart?: boolean }) {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="text-2xl font-bold text-blue-600">
-            PetShop
+            {storeName}
           </Link>
 
           {/* Search Bar (Desktop) */}

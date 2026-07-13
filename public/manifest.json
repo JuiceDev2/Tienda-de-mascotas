@@ -4,8 +4,8 @@
 // ============================================================================
 
 {
-  "name": "PetShop ERP/POS - Sistema de Gestión",
-  "short_name": "PetShop",
+  "name": "AquaPets ERP/POS - Sistema de Gestión",
+  "short_name": "AquaPets",
   "description": "Sistema ERP/POS multiempresa para tiendas de mascotas con gestión de inventario, ventas y notificaciones inteligentes",
   "start_url": "/",
   "scope": "/",

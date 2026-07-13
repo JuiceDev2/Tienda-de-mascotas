@@ -10,6 +10,7 @@ import { UploadCloud } from 'lucide-react';
 
 interface CompanySettings {
   id: string;
+  name: string;
   hero_image_url: string | null;
   hero_title: string | null;
   hero_subtitle: string | null;
@@ -23,6 +24,7 @@ export default function AdminSettingsPage() {
   const [pendingBlob, setPendingBlob] = useState<Blob | null>(null);
   const [sizes, setSizes] = useState<{ original: number; converted: number } | null>(null);
   const [form, setForm] = useState({
+    name: '',
     hero_title: '',
     hero_subtitle: '',
     hero_cta_text: '',
@@ -43,6 +45,7 @@ export default function AdminSettingsPage() {
         setCompany(c);
         if (c) {
           setForm({
+            name: c.name || '',
             hero_title: c.hero_title || '',
             hero_subtitle: c.hero_subtitle || '',
             hero_cta_text: c.hero_cta_text || '',
@@ -140,6 +143,18 @@ export default function AdminSettingsPage() {
       )}
 
       <div className="bg-white rounded-lg shadow p-6 max-w-3xl space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la tienda</label>
+          <Input
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            placeholder="AquaPets"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Se muestra en el logo del encabezado y en el título de la pestaña del navegador.
+          </p>
+        </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Imagen de fondo</label>
 

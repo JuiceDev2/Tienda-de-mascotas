@@ -53,7 +53,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">🐾 Iniciar sesión</h1>
-        <p className="text-gray-600 mb-6">Accede a tu cuenta de PetShop</p>
+        <p className="text-gray-600 mb-6">Accede a tu cuenta de AquaPets</p>
 
         {error && (
           <div className="mb-4">

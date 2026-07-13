@@ -117,7 +117,7 @@ export default function HomePage() {
       .then((body) => setProducts(body.data?.data || []));
   }, []);
 
-  const storeName = company?.name || 'PetShop';
+  const storeName = company?.name || 'AquaPets';
 
   return (
     <div className="min-h-screen bg-sky-50">
