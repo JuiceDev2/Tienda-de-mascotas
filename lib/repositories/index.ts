@@ -11,6 +11,7 @@ import {
   Pet,
   Category,
   Brand,
+  Branch,
   PaginatedResponse,
   PaginationParams,
   NotificationStatus,
@@ -438,6 +439,88 @@ export class PetRepository {
 }
 
 /**
+ * BRANCH REPOSITORY
+ */
+export class BranchRepository {
+  private supabase;
+
+  constructor() {
+    this.supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+    );
+  }
+
+  async findAllByCompany(companyId: string, includeInactive = false): Promise<Branch[]> {
+    let query = this.supabase
+      .from('branches')
+      .select('*')
+      .eq('company_id', companyId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: true });
+
+    if (!includeInactive) {
+      query = query.eq('is_active', true);
+    }
+
+    const { data, error } = await query;
+    if (error) throw new Error(`Error fetching branches: ${error.message}`);
+    return data as Branch[];
+  }
+
+  async findById(companyId: string, branchId: string): Promise<Branch | null> {
+    const { data, error } = await this.supabase
+      .from('branches')
+      .select('*')
+      .eq('company_id', companyId)
+      .eq('id', branchId)
+      .is('deleted_at', null)
+      .single();
+
+    if (error?.code === 'PGRST116') return null;
+    if (error) throw new Error(`Error fetching branch: ${error.message}`);
+    return data as Branch;
+  }
+
+  async create(
+    branch: Omit<Branch, 'id' | 'created_at' | 'updated_at' | 'deleted_at'>
+  ): Promise<Branch> {
+    const { data, error } = await this.supabase
+      .from('branches')
+      .insert([branch])
+      .select()
+      .single();
+
+    if (error) throw new Error(`Error creating branch: ${error.message}`);
+    return data as Branch;
+  }
+
+  async update(companyId: string, branchId: string, updates: Partial<Branch>): Promise<Branch> {
+    const { data, error } = await this.supabase
+      .from('branches')
+      .update(updates)
+      .eq('company_id', companyId)
+      .eq('id', branchId)
+      .select()
+      .single();
+
+    if (error) throw new Error(`Error updating branch: ${error.message}`);
+    return data as Branch;
+  }
+
+  async delete(companyId: string, branchId: string): Promise<boolean> {
+    const { error } = await this.supabase
+      .from('branches')
+      .update({ deleted_at: new Date().toISOString(), is_active: false })
+      .eq('company_id', companyId)
+      .eq('id', branchId);
+
+    if (error) throw new Error(`Error deleting branch: ${error.message}`);
+    return true;
+  }
+}
+
+/**
  * CATEGORY REPOSITORY
  */
 export class CategoryRepository {
@@ -485,6 +568,17 @@ export class CategoryRepository {
     if (error) throw new Error(`Error updating category: ${error.message}`);
     return data as Category;
   }
+
+  async delete(companyId: string, categoryId: string): Promise<boolean> {
+    const { error } = await this.supabase
+      .from('categories')
+      .update({ deleted_at: new Date().toISOString(), is_active: false })
+      .eq('company_id', companyId)
+      .eq('id', categoryId);
+
+    if (error) throw new Error(`Error deleting category: ${error.message}`);
+    return true;
+  }
 }
 
 /**
@@ -522,6 +616,30 @@ export class BrandRepository {
     if (error) throw new Error(`Error creating brand: ${error.message}`);
     return data as Brand;
   }
+
+  async update(companyId: string, brandId: string, updates: Partial<Brand>): Promise<Brand> {
+    const { data, error } = await this.supabase
+      .from('brands')
+      .update(updates)
+      .eq('company_id', companyId)
+      .eq('id', brandId)
+      .select()
+      .single();
+
+    if (error) throw new Error(`Error updating brand: ${error.message}`);
+    return data as Brand;
+  }
+
+  async delete(companyId: string, brandId: string): Promise<boolean> {
+    const { error } = await this.supabase
+      .from('brands')
+      .update({ deleted_at: new Date().toISOString(), is_active: false })
+      .eq('company_id', companyId)
+      .eq('id', brandId);
+
+    if (error) throw new Error(`Error deleting brand: ${error.message}`);
+    return true;
+  }
 }
 
 // Export instances
@@ -531,3 +649,4 @@ export const customerRepository = new CustomerRepository();
 export const petRepository = new PetRepository();
 export const categoryRepository = new CategoryRepository();
 export const brandRepository = new BrandRepository();
+export const branchRepository = new BranchRepository();
