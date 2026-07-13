@@ -12,6 +12,7 @@ import {
   Category,
   Brand,
   Branch,
+  Company,
   PaginatedResponse,
   PaginationParams,
   NotificationStatus,
@@ -642,6 +643,45 @@ export class BrandRepository {
   }
 }
 
+/**
+ * COMPANY REPOSITORY
+ * Single-tenant storefront settings (name, hero banner, contact info)
+ */
+export class CompanyRepository {
+  private supabase;
+
+  constructor() {
+    this.supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+    );
+  }
+
+  async findById(companyId: string): Promise<Company | null> {
+    const { data, error } = await this.supabase
+      .from('companies')
+      .select('*')
+      .eq('id', companyId)
+      .single();
+
+    if (error?.code === 'PGRST116') return null;
+    if (error) throw new Error(`Error fetching company: ${error.message}`);
+    return data as Company;
+  }
+
+  async update(companyId: string, updates: Partial<Company>): Promise<Company> {
+    const { data, error } = await this.supabase
+      .from('companies')
+      .update(updates)
+      .eq('id', companyId)
+      .select()
+      .single();
+
+    if (error) throw new Error(`Error updating company: ${error.message}`);
+    return data as Company;
+  }
+}
+
 // Export instances
 export const userRepository = new UserRepository();
 export const notificationRepository = new NotificationRepository();
@@ -650,3 +690,4 @@ export const petRepository = new PetRepository();
 export const categoryRepository = new CategoryRepository();
 export const brandRepository = new BrandRepository();
 export const branchRepository = new BranchRepository();
+export const companyRepository = new CompanyRepository();

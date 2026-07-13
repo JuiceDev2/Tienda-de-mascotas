@@ -11,6 +11,7 @@ import {
   Store,
   Users,
   FileBarChart,
+  Settings,
 } from 'lucide-react';
 
 const SIDEBAR_ITEMS = [
@@ -20,6 +21,7 @@ const SIDEBAR_ITEMS = [
   { label: 'Sucursales', href: '/admin/branches', icon: <Store className="w-4 h-4" /> },
   { label: 'Usuarios', href: '/admin/users', icon: <Users className="w-4 h-4" /> },
   { label: 'Reportes', href: '/admin/reports', icon: <FileBarChart className="w-4 h-4" /> },
+  { label: 'Configuración', href: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -69,6 +69,11 @@ export interface Company extends BaseEntity {
   policies: Record<string, any>;
   enable_pet_catalog: boolean;
   is_active: boolean;
+  hero_image_url: string | null;
+  hero_title: string | null;
+  hero_subtitle: string | null;
+  hero_cta_text: string | null;
+  hero_cta_url: string | null;
   created_by: string | null;
   updated_by: string | null;
 }
