@@ -18,7 +18,9 @@ import {
   userRepository,
   notificationRepository,
   customerRepository,
+  branchRepository,
 } from '../repositories/index';
+import { sendPushToUser } from '../push';
 import {
   NotificationType,
   NotificationStatus,
@@ -384,7 +386,7 @@ export class NotificationService {
     relatedEntityType?: string,
     relatedEntityId?: string
   ) {
-    return await notificationRepository.create({
+    const notification = await notificationRepository.create({
       company_id: companyId,
       user_id: userId,
       notification_type: notificationType,
@@ -394,6 +396,13 @@ export class NotificationService {
       related_entity_id: relatedEntityId,
       status: NotificationStatus.Unread,
     } as any);
+
+    // Best-effort push: a subscription may not exist yet (e.g. user never
+    // enabled push in the browser), so this must never block the in-app
+    // notification from being created.
+    sendPushToUser(userId, { title, body: message }).catch(() => {});
+
+    return notification;
   }
 
   /**
@@ -431,9 +440,7 @@ export class NotificationService {
   }
 
   private async getBranchesByCompany(companyId: string): Promise<{ id: string }[]> {
-    // This should call a branch repository method
-    // For now, returning empty array
-    return [];
+    return await branchRepository.findAllByCompany(companyId);
   }
 }
 

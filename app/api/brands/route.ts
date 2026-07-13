@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { branchRepository } from '@/lib/repositories';
+import { brandRepository } from '@/lib/repositories';
 import { getAuthContext, getDefaultCompanyId } from '@/lib/api-auth';
-import { validateData, BranchCreateSchema } from '@/lib/validations/schemas';
+import { validateData, BrandCreateSchema } from '@/lib/validations/schemas';
 
 export async function GET() {
   const auth = await getAuthContext();
@@ -12,12 +12,8 @@ export async function GET() {
   }
 
   try {
-    // Admins managing the branch list also need to see inactive branches.
-    const branches = await branchRepository.findAllByCompany(
-      companyId,
-      auth?.role === 'admin'
-    );
-    return NextResponse.json({ data: branches });
+    const brands = await brandRepository.findAllByCompany(companyId);
+    return NextResponse.json({ data: brands });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -31,23 +27,18 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const validated = validateData(BranchCreateSchema, body);
-    const branch = await branchRepository.create({
+    const validated = validateData(BrandCreateSchema, body);
+    const brand = await brandRepository.create({
       ...validated,
       company_id: auth.companyId,
-      phone: validated.phone ?? null,
-      email: validated.email ?? null,
-      city: validated.city ?? null,
-      state: validated.state ?? null,
-      manager_name: validated.manager_name ?? null,
-      manager_phone: validated.manager_phone ?? null,
-      opening_time: validated.opening_time ?? null,
-      closing_time: validated.closing_time ?? null,
+      logo_url: validated.logo_url ?? null,
+      description: validated.description ?? null,
+      website: validated.website ?? null,
       is_active: true,
       created_by: auth.id,
       updated_by: auth.id,
     } as any);
-    return NextResponse.json({ data: branch }, { status: 201 });
+    return NextResponse.json({ data: brand }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }

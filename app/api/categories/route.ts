@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { branchRepository } from '@/lib/repositories';
+import { categoryRepository } from '@/lib/repositories';
 import { getAuthContext, getDefaultCompanyId } from '@/lib/api-auth';
-import { validateData, BranchCreateSchema } from '@/lib/validations/schemas';
+import { validateData, CategoryCreateSchema } from '@/lib/validations/schemas';
 
 export async function GET() {
   const auth = await getAuthContext();
@@ -12,12 +12,8 @@ export async function GET() {
   }
 
   try {
-    // Admins managing the branch list also need to see inactive branches.
-    const branches = await branchRepository.findAllByCompany(
-      companyId,
-      auth?.role === 'admin'
-    );
-    return NextResponse.json({ data: branches });
+    const categories = await categoryRepository.findAllByCompany(companyId);
+    return NextResponse.json({ data: categories });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -31,23 +27,17 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const validated = validateData(BranchCreateSchema, body);
-    const branch = await branchRepository.create({
+    const validated = validateData(CategoryCreateSchema, body);
+    const category = await categoryRepository.create({
       ...validated,
       company_id: auth.companyId,
-      phone: validated.phone ?? null,
-      email: validated.email ?? null,
-      city: validated.city ?? null,
-      state: validated.state ?? null,
-      manager_name: validated.manager_name ?? null,
-      manager_phone: validated.manager_phone ?? null,
-      opening_time: validated.opening_time ?? null,
-      closing_time: validated.closing_time ?? null,
+      description: validated.description ?? null,
+      image_url: validated.image_url ?? null,
       is_active: true,
       created_by: auth.id,
       updated_by: auth.id,
     } as any);
-    return NextResponse.json({ data: branch }, { status: 201 });
+    return NextResponse.json({ data: category }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }

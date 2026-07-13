@@ -460,6 +460,75 @@ export function Alert({
 }
 
 /**
+ * MODAL COMPONENT
+ * Simple centered modal used by the admin CRUD screens
+ */
+export function Modal({
+  title,
+  onClose,
+  children,
+}: {
+  title: string;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b">
+          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * CONFIRM DIALOG COMPONENT
+ * Small confirmation dialog for destructive actions (e.g. delete)
+ */
+export function ConfirmDialog({
+  title,
+  message,
+  onConfirm,
+  onCancel,
+  isLoading,
+}: {
+  title: string;
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  isLoading?: boolean;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
+      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-sm p-6">
+        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <p className="text-sm text-gray-600 mt-2">{message}</p>
+        <div className="mt-6 flex justify-end gap-3">
+          <Button variant="outline" onClick={onCancel} disabled={isLoading}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            {isLoading ? 'Eliminando...' : 'Eliminar'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
  * LOADING SPINNER COMPONENT
  */
 export function LoadingSpinner() {
