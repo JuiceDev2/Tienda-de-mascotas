@@ -136,6 +136,41 @@ export class InventoryRepository {
   }
 
   /**
+   * Directly set the stock quantity for a product in a branch, creating the
+   * inventory row if it doesn't exist yet. Used by the admin product form
+   * so a newly created product immediately has a stock level and becomes
+   * visible on the storefront (which requires an inventory row > 0).
+   */
+  async upsertStock(
+    companyId: string,
+    branchId: string,
+    productId: string,
+    quantity: number
+  ): Promise<Inventory> {
+    const { data, error } = await this.supabase
+      .from('inventory')
+      .upsert(
+        [
+          {
+            company_id: companyId,
+            branch_id: branchId,
+            product_id: productId,
+            quantity_on_hand: quantity,
+          },
+        ],
+        { onConflict: 'branch_id,product_id' }
+      )
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Error setting stock: ${error.message}`);
+    }
+
+    return data as Inventory;
+  }
+
+  /**
    * Get low stock products (below minimum)
    */
   async getLowStockProducts(

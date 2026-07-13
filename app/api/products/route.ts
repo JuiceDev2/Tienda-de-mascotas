@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { productRepository } from '@/lib/repositories/lib_repositories_product.repository';
+import { inventoryRepository } from '@/lib/repositories/lib_repositories_inventory.repository';
 import { productService } from '@/lib/services';
 import { getAuthContext, getDefaultCompanyId } from '@/lib/api-auth';
 
@@ -65,9 +66,24 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
+  // branch_id / initial_stock aren't part of the product schema itself —
+  // they're used below to seed the inventory row so the product shows up
+  // on the storefront listing right away instead of needing a separate
+  // inventory adjustment step.
+  const { branch_id, initial_stock, ...productInput } = body;
 
   try {
-    const product = await productService.createProduct(auth.companyId, body);
+    const product = await productService.createProduct(auth.companyId, productInput);
+
+    if (branch_id) {
+      await inventoryRepository.upsertStock(
+        auth.companyId,
+        branch_id,
+        product.id,
+        Number(initial_stock) || 0
+      );
+    }
+
     return NextResponse.json({ data: product }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });

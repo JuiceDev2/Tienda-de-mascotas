@@ -16,7 +16,7 @@ import {
 
 const SIDEBAR_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
-  { label: 'Productos', href: '/admin/products', icon: <Package className="w-4 h-4" /> },
+  { label: 'Productos y Mascotas', href: '/admin/products', icon: <Package className="w-4 h-4" /> },
   { label: 'Categorías', href: '/admin/categories', icon: <Tags className="w-4 h-4" /> },
   { label: 'Sucursales', href: '/admin/branches', icon: <Store className="w-4 h-4" /> },
   { label: 'Usuarios', href: '/admin/users', icon: <Users className="w-4 h-4" /> },

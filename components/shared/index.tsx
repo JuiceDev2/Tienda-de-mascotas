@@ -426,6 +426,53 @@ export function ProductCard({
 }
 
 /**
+ * PET CARD COMPONENT
+ * Display a pet in the same grid layout used for products
+ */
+export function PetCard({
+  pet,
+  onAddToCart,
+}: {
+  pet: any;
+  onAddToCart?: (petId: string) => void;
+}) {
+  return (
+    <div className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow">
+      <div className="aspect-video bg-gray-200 overflow-hidden">
+        {pet.image_urls?.[0] ? (
+          <img
+            src={pet.image_urls[0]}
+            alt={pet.name}
+            className="w-full h-full object-cover hover:scale-105 transition-transform"
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full bg-gray-100">
+            <span className="text-gray-400">Sin imagen</span>
+          </div>
+        )}
+      </div>
+
+      <div className="p-4">
+        <p className="text-sm text-gray-500">{pet.species}{pet.breed ? ` · ${pet.breed}` : ''}</p>
+        <h3 className="text-lg font-semibold text-gray-900 mt-1 truncate">{pet.name}</h3>
+
+        <div className="mt-4 flex items-baseline gap-2">
+          <span className="text-2xl font-bold text-gray-900">${Number(pet.price).toFixed(2)}</span>
+        </div>
+
+        <p className="text-sm mt-2 text-green-600">Disponible</p>
+
+        <div className="mt-4">
+          <Button onClick={() => onAddToCart?.(pet.id)} className="w-full">
+            Agregar
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
  * ALERT COMPONENT
  * Display alerts and notifications
  */

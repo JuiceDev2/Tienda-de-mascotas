@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { productRepository } from '@/lib/repositories/lib_repositories_product.repository';
-import { inventoryRepository } from '@/lib/repositories/lib_repositories_inventory.repository';
-import { productService } from '@/lib/services';
+import { petRepository } from '@/lib/repositories';
 import { getAuthContext } from '@/lib/api-auth';
+import { validateData, PetUpdateSchema } from '@/lib/validations/schemas';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const auth = await getAuthContext();
@@ -11,11 +10,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 
   try {
-    const product = await productRepository.findById(auth.companyId, params.id);
-    if (!product) {
-      return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 });
+    const pet = await petRepository.findById(auth.companyId, params.id);
+    if (!pet) {
+      return NextResponse.json({ error: 'Mascota no encontrada' }, { status: 404 });
     }
-    return NextResponse.json({ data: product });
+    return NextResponse.json({ data: pet });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -28,21 +27,14 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 
   const body = await req.json();
-  const { branch_id, initial_stock, ...productInput } = body;
 
   try {
-    const product = await productService.updateProduct(auth.companyId, params.id, productInput);
-
-    if (branch_id) {
-      await inventoryRepository.upsertStock(
-        auth.companyId,
-        branch_id,
-        params.id,
-        Number(initial_stock) || 0
-      );
-    }
-
-    return NextResponse.json({ data: product });
+    const validated = validateData(PetUpdateSchema, body);
+    const pet = await petRepository.update(auth.companyId, params.id, {
+      ...validated,
+      updated_by: auth.id,
+    } as any);
+    return NextResponse.json({ data: pet });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
@@ -55,7 +47,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   }
 
   try {
-    await productRepository.delete(auth.companyId, params.id);
+    await petRepository.delete(auth.companyId, params.id);
     return NextResponse.json({ data: { success: true } });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });
